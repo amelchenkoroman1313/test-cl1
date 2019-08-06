@@ -1,0 +1,793 @@
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Go test</title>
+	<link rel="shortcut icon" href="/images/favicon.ico" type="images/x-icon">
+	<style>
+	* { margin: 0;padding: 0; }
+	html,body { width: 100%; height: 100%; overflow:hidden; }
+	body { background: #373e47; font-family: Arial; font-size: 12px; color: #e4e4e4; line-height: 18px; text-shadow: 0 1px 0 rgba(0,0,0,0.75); height: 99vh; display: flex; flex-direction: column; } 
+	::selection { background-color: #62a874; color: white; text-shadow: none; }
+	::-moz-selection { background-color: #62a874; color: white; text-shadow: none; }
+	input,select { padding: 5px; height: auto; border: 1px solid white; background-color: #f0f0f0; box-shadow:inset 0 1px 2px rgba(0,0,0,0.15); } 
+	input,div.button { transition: all linear 0.2s; border-radius: 3px; }
+	.nav input { width: 200px; }
+	select { width: 210px; }
+	div.container input { height: 22px; width: 110px; } 
+	div.container .uidInp { width:70px; }
+	input:focus, select:focus { outline: none; box-shadow: none; background-color: white; }
+	input:focus, select:focus { outline: none;box-shadow: none;background-color: white; }
+	.jStr{width:83% !important;}
+	input:-moz-placeholder {color: #9c9c9c; }
+	input::-webkit-input-placeholder { color: #9c9c9c; }
+	input.nav-inp { display:inline-block; margin:0 5px 0 5px; }
+	div.button.close { display:inline-block; float:right; height:15px; width:8px; }
+	div.button {
+		display:inline-block;
+		cursor: pointer;
+		color: white;
+		font-size: 12px;
+		font-weight:bold;
+		font-family: Arial;
+		border: none;
+		padding: 2px 12px 2px;
+		margin: 1px 1px 1px 0px;
+		background-color: #62a874;
+		background-repeat: no-repeat;
+		background-image: -ms-linear-gradient(top, #366141, #62a874);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#366141), to(#62a874));
+		background-image: -webkit-linear-gradient(top, #366141, #62a874);
+		background-image: -o-linear-gradient(top, #366141, #62a874);
+		background-image: linear-gradient(top, #366141, #62a874);
+		background-image: -moz-linear-gradient(top, #366141, #62a874);
+		box-shadow: 0 2px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+		-webkit-box-shadow: 0 2px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+		-moz-box-shadow: 0 2px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5); }
+	#pip { /*margin-left: auto; margin-right: auto; height:12px; width:10px;*/ position: relative;  text-align: center; height: 10px; margin-top:-20px ;cursor:pointer; }
+	div.button:hover {background-position: 0 -15px; }
+	div.button:active {
+		background-position: 0 ;
+		background-image: -ms-linear-gradient(bottom, #62a874, #366141 );
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62a874), to(#366141));
+		background-image: -webkit-linear-gradient(bottom, #62a874, #366141);
+		background-image: -o-linear-gradient(bottom, #62a874, #366141);
+		background-image: linear-gradient(bottom, #62a874, #366141);
+		background-image: -moz-linear-gradient(bottom, #62a874, #366141); }
+	.nav div.button { margin:0 10px 0 18px; padding: 6px 10px 3px; width:71px; text-align:center; }
+	/*Шапка*/
+	#wrapper { width: 980px; margin:auto; left:0; right:0; transition:all 0.5s; top:0px; position:relative; height:85px; } /*флекс фиксированный контейрер*/
+	.hide{ position:fixed; top:-70px !important; height:13px !important; }
+	.header { padding-top: 20px; margin-bottom: 20px; }
+	.headerContent {
+		box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+		-webkit-box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+		-moz-box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+		background-color: #f2f2f2;
+		background-repeat: no-repeat;
+		background-image: -ms-linear-gradient(top, #f2f2f2, #e4e4e4);
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f2f2f2), to(#e4e4e4));
+		background-image: -webkit-linear-gradient(top, #f2f2f2, #e4e4e4);
+		background-image: -o-linear-gradient(top, #f2f2f2, #e4e4e4);
+		background-image: linear-gradient(top, #f2f2f2, #e4e4e4);
+		background-image: -moz-linear-gradient(top, #f2f2f2, #e4e4e4);
+		height: 33px;
+		border-radius: 3px;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		padding: 10px 0px 3px 0px; }	
+	div.nav p { font-size: 14px;font-weight: bold; text-decoration: none; padding: 0 30px; color: #143567; text-shadow: 0 1px 0 white; display:inline-block; }
+	div.nav p:hover { color: #3d8e82; }
+	div.game-win { margin-left:5px; width:100%; height:100%; }
+	.game-win.gLog:hover .mc { outline:1px solid #3d7d5d; box-shadow: 0 0 3px #ddd; }
+	.mc { margin-top:2px; }
+	/* Флексы */
+	/* Занимает все кроме врапера */
+	#game-content { display: flex; flex: 1; min-height: 0px; /* IMPORTANT: you need this for non-chrome browsers */ }
+	/* the overflow content itself */
+	.container.mc { 
+		overflow: auto; 
+		padding-top: 10px; 
+		padding-left:10px;
+		border-radius:3p;
+		-webkit-border-radius:3px;
+		-moz-border-radius:3px; 
+		border: 1px solid #67707d; 
+		background-color: #475363;  
+		background-color: rgba(87,103,127,0.5); }
+	.content{height:200%; }
+
+	#draggable { width: 600px; height: 400px; position: absolute; background-color: #f2f2f2; border-radius:3px; 
+		box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+		-webkit-box-shadow: 0 3px 2px rgba(0,0,0,0.3);
+		-moz-box-shadow: 0 3px 2px rgba(0,0,0,0.3); } 
+	#iWin { border:5px solid #262b31; background-color: #475363;  width: 97%; height: 94%; margin: 1% 1% 1% 1%; }
+	.bTop { display: inline-flex; height:50%; width:100%; transform: rotate(180deg); }
+	.bBottom { display: inline-flex; height:50%; width:100%;}
+	.bField { height: 100%; width: 80%; background-size:100% 100%; background-image: url('http://*****/images/test.bg1.png'); justify-content: center; }
+	.bField:nth-child(7) { border-left: 5px solid #262b31; }
+	.bField:nth-child(6) { border-right: 5px solid #262b31; }
+	div.black{height:6%; width:70%; background-color:#000000a1; border-top:1px solid white; margin: 0px 0px 0px 14px; }
+	div.white{height:6%; width:70%; background-color:#655c4e9e; border-top:1px solid black; margin: 0px 0px 0px 14px; }
+	div.black:first-child{ padding-top: 5px; margin-top: 8%; }
+	div.white:first-child{ padding-top: 5px; margin-top: 8%;}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/overcast/jquery-ui.css" />
+</head>
+<body>
+	<div id="wrapper">
+		<div class="header">
+				<div class ="headerContent" id="head-nav" >
+					<div class="nav">
+						<p>Chose your game</p>
+						<select id="gameid" >
+							<option disabled >Game list</option>
+							<option value="1940000">Нарды</option>
+							<option value="123456789">1000</option>
+						</select>
+						<p>GameKEY</p>
+						<input type="text" id="gamekey"  value="">
+						<div class="button" id="b1">Add window</div>
+						<div class="button" id="b2">Board</div>
+					</div>
+				</div>	
+		</div>
+		<div id="pip" class="arrows">∧</div>
+	</div>
+	<div id="game-content"></div>
+	
+<script>
+
+	var elMan = function(){
+		var p = this;
+		p.urlHubApi = location.protocol + '//' + location.hostname + '/go-hub1-sys/';
+		p.urlWSHub1 = (location.protocol == 'http:' || location.protocol == 'http'?'ws':'wss') + '://' + location.hostname + '/go-hub1-ws-bot/';
+
+		p.id = (new Date).getTime();
+
+		p.key = '';
+		p.socket = null;
+
+		p.g = [{
+			type: 'u',
+			text:'class="uidInp " placeholder="Enter uID" type="text" ',
+			dom: 'p.dUid'
+		},{
+			type: 'c',
+			handler: 'p.winClose',
+			dom: 'p.dUid'
+		},{
+			type: 'k',
+			text: 'get KEY',
+			handler: 'p.getKey',
+			dom: 'p.dUid'
+		},{
+			type: 'u2',
+			text: 'class="nav-inp" placeholder="Enter cordinates" type="text"  value="" ',
+			dom: 'p.dUid'
+		},{
+			type: 's',
+			text: 'Submit',
+			handler: 'p.enterCords',
+			dom: 'p.dUid'
+		},{
+			type: 'k',
+			text: 'Open Connection',
+			handler: 'p.fOpenWS',
+			dom: 'p.contNav'
+		},{
+			type: 'k',
+			text: 'Get Snap',
+			handler: 'p.getSnap',
+			dom: 'p.contNav'
+		},{
+			type: 'k',
+			text: 'Close Connection',
+			handler: 'p.fCloseWS',
+			dom: 'p.contNav'
+		},{
+			type: 'k',
+			text: 'Clear',
+			handler: 'p.fClearLog',
+			dom: 'p.contNav'
+		},{
+			type: 'u3',
+			text:'class="jStr u3" placeholder="Enter Json" type="text" ',
+			dom: 'p.eText'
+		},{
+			type: 's2',
+			text: 'Ok',
+			handler: 'p.enterJson',
+			dom: 'p.eText'
+		}];
+
+		for (var i in arguments[0])
+			p[i] = arguments[0][i];
+	};
+	
+	elMan.prototype.elInit = function (){
+		var p = this;
+//		console.log('bgl.prototype.init', p);
+
+		for (var i in p.g){	
+			if(p.g[i].type == 'u'){
+				p.dUid.append('<input ' + p.g[i].text + ' id="u' + (p.id + '') + (i + '') + '" value="">');
+				p.uidField = $('#u' + (p.id + '') + (i + ''));
+			}
+			else if(p.g[i].type == 'u2'){ 
+				p.dUid.append('<input ' + p.g[i].text + ' id="u' + (p.id + '') + (i + '') + '" value="">');
+				p.uidField2 = $('#u' + (p.id + '') + (i + ''));
+			}
+			else if (p.g[i].type == 's'){
+				p.dUid.append('<div class="button submit" data-id="' + i + '" id="k' + (p.id + '') + (i + '') + '">' + p.g[i].text + '</div>');
+				$('#k' + (p.id + '') + (i + '')).on('click', {p: p}, eval(p.g[i]['handler']));
+			} 
+			else if (p.g[i].type == 'c'){
+				p.dUid.append('<div class="button close" data-id="' + i + '" id="k' + (p.id + '') + (i + '') + '">X</div>');
+				$('#k' + (p.id + '') + (i + '')).on('click', {p: p}, eval(p.g[i]['handler']));
+				p.closeId = $('#k' + (p.id + '') + (i + ''));
+			}
+			else if(p.g[i].type == 'u3'){
+				p.eText.append('<input ' + p.g[i].text + ' id="en' + (p.id + '') + (i + '') + '" value=""">');
+				p.uidField3 = $('#en' + (p.id + '') + (i + ''));
+			}
+			else if (p.g[i].type == 's2'){
+				p.eText.append('<div class="button ok" data-id="' + i + '" id="b' + (p.id + '') + (i + '') + '">' + p.g[i].text + '</div>');
+				$('#b' + (p.id + '') + (i + '')).on('click', {p: p}, eval(p.g[i]['handler']));
+			}	
+			else if(p.g[i].type == 'k'){				
+				p.contNav.append('<div class="button" data-id="' + i + '" id="k' + (p.id + '') + (i + '') + '">' + p.g[i].text + '</div>');
+				$('#k' + (p.id + '') + (i + '')).on('click', {p: p}, eval(p.g[i]['handler']));
+			}
+			else{
+//				console.log(p.b[i]);
+			}
+		}
+	}	
+
+
+	elMan.prototype.getKey = function(e){
+		var p = e.data.p;
+		var po = {betInfo:{currency:10000, limits:{rake:{min:25, max:25}, total:{min:10, max:100}}, bet:100}, parameters:{game_rule_bolt:"always", time_turn:"60", game_rule_dump_truck:"none", time_personal:"300"}, type:"game_create", gameId:$('#gameid').val() * 1};
+
+		$.ajax({
+			url: p.urlHubApi,
+			dataType: 'json',
+			method: 'POST',
+			processData: false,
+			data: JSON.stringify(po),
+			success: function (ret, statusText, xhr, form){
+				if (ret && ret.data && ret.data.sessionId){
+					p.l('game key is ' + ret.data.sessionId, 1);
+					$('#gamekey').val(ret.data.sessionId);
+					p.fOpenWS();
+				}
+				else{
+					p.l('game key ERROR ' + JSON.stringify(ret), 'err', 1);
+				}
+	//				console.log(ret);
+			},
+			beforeSend: function (){
+				//
+			},
+			error: function (){
+	//    	    			p.oSearch.oUserList.spinner('hide');
+	//	    				p.oSearch.oBtnSearch.spinner('hide');
+	//	    				console.error('err oFriendM.onSearch', arguments);
+			}
+		});
+			p.l($(this).text(), 'div.button', 1);
+	//	    			s({type: 'subscribe', target: 'inwait', gameId: '24'});
+	//	    			s({cmd: 'gb'});	
+	}
+
+//	Open WS
+	elMan.prototype.fOpenWS = function(e){	
+//		console.log( "p in fOpenWS : ",p);
+		if(e){
+			var p = e.data.p;
+		}else {
+			var	p = this;
+		}
+
+		if (!$('#gamekey').val()){
+			p.l('Нет ключа!', 'err');
+			return;
+		}
+//		console.log(p.uidField);
+		p.socket = new WebSocket(p.urlWSHub1 + '?roomId=' + $('#gamekey').val() + '&botId=' + p.uidField.val());
+//		console.log( 'eUid',p.eUid);
+		p.socket.onopen = function(){	
+//			console.log("вывести :" + this);
+//			var p =  this ;
+			p.l('Соединение установлено.', 'ok');
+			p.s({data:null, type:'connect'});
+//			s({type: 'subscribe_all'});
+		};
+
+		p.socket.onclose = function(event) {
+			if (event.wasClean) {
+				p.l('Соединение закрыто чисто', 'ok');
+			} else {
+				p.l('Обрыв соединения', 'err');
+			}
+			p.l('Код: ' + event.code + ' причина: ' + event.reason, 'err');
+//			console.log(event);
+		};
+
+		p.socket.onmessage = function(event){
+			if (event.data instanceof Blob){
+				console.log('its Blob');
+				p.reader = new FileReader();
+				p.reader.onload = function (d){
+					console.log(arguments);
+					p.l('>>');
+					p.l(p.f(JSON.parse(d.currentTarget.result)));
+				}
+				p.reader.readAsText(event.data);
+			}
+			else
+				p.l('>> ' + event.data);
+		};
+
+		p.socket.onerror = function(error){
+			p.l('Ошибка ' + error.message, 'err');
+			console.log(error,error.data,error.code);
+		};
+	}
+
+// 	Get snapshot
+	elMan.prototype.getSnap = function(e){
+		var p = e.data.p;
+		p.l($(p).text(), 'div.button', 1);
+		p.s({"data":null, "type":"snapshot"});
+	}
+
+//	Close WS
+	elMan.prototype.fCloseWS = function(e){
+		var p = e.data.p;
+		p.l($(this).text(), 'div.button', 1);
+		p.socket.close();
+	}
+
+//  Clear page
+	elMan.prototype.fClearLog = function (e){
+		var p = e.data.p;
+		p.contLog.html('');
+//		p.l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do <br> eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut <br> enim ad minim veniam,' +
+// 		'quis nostrud exercitation ullamco <br>laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure <br> dolor in reprehenderit in voluptate velit esse cillum ' +
+//		' dolore eu <br> fugiat nulla pariatur. Excepteur sint occaecat cupidatat non <br> proident, sunt in culpa qui officia deserunt mollit anim id est <br> laborum.');
+	}
+
+	elMan.prototype.enterCords = function(e){	
+		var	p = e.data.p;
+
+//		console.log(p.uidField2.val().match(reg));
+		var str = p.uidField2.val().replace(/[^a-z0-9]/gi, '');
+		var chunks = [];
+		for (var i = 0, charsLength = str.length; i < charsLength; i += 3) {
+   			 chunks.push(str.substring(i, i + 3 ));
+		}
+		var chunkStr = chunks.join(',');
+
+		p.s('{"data": {"type": "game_move","steps": "' + chunkStr + '"},"type": "action"}');
+//		console.log('{"data": {"type": "game_move","steps": "' + chunkStr + '"},"type": "action"}');
+	}
+
+	elMan.prototype.enterJson = function(e){
+		var p = e.data.p;
+
+		p.s(p.uidField3.val());
+
+	}
+
+
+//      
+	elMan.prototype.s = function(data){
+		var p = this;
+		if(typeof data  == 'string'){
+			p.l('<< ' + data);
+			p.socket.send(data);
+		}else{
+			p.l('<< ' + JSON.stringify(data));
+			p.socket.send(JSON.stringify(data));
+		}
+	}
+
+//	тут Json добавляется в тег pre, который потом отображается в логе 
+	elMan.prototype.f = function(o){
+		var p = this;
+		var jSub = JSON.stringify(o, null, 4);
+		console.log('jSub');
+		return '<pre>' + JSON.stringify(o, null, 4) + '</pre>';
+
+	}
+
+// 	даты для логов?
+	elMan.prototype.l = function(txt, type, addLine){
+		var p = this;
+		var d = new Date(), ds = '';
+		ds = d.getDate() + '.' + (d.getMonth() + 1) + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ':' + d.getMilliseconds();
+
+		if (addLine)
+			p.contLog.append('<div class="d">' + ds + '</div>' + '<div class="t">============================</div>');
+			p.contLog.append('<div class="d">' + ds + '</div>' + '<div class="t' + (type?' ' + type:'') + '">' + txt + '</div>');
+			p.contLog.scrollTop(p.contLog.find('div').last().offset().top + p.contLog.scrollTop());
+
+//			$('#container').animate({scrollTop: $('#container').last().offset().top}, "fast");
+//			console.log($('#container').find('div').last(), $('#container').find('div').last().offset(), $('#container').scrollTop());
+	}
+
+	
+	var shablonMan = new elMan();
+
+	var bgl = function(){
+		var p = this;
+		p.key = '';
+
+		p.b = [{
+			type: 'b',
+			text: 'take A',
+			send2sock: {"data":{"type":"place_take", "place_id":"A"}, "type":"action"},
+			dom: 'p.contNav'
+		},{
+			type: 'b',
+			text: 'take B',
+			send2sock: {"data":{"type":"place_take", "place_id":"B"}, "type":"action"},
+			dom:'p.contNav'
+		},{
+			type: 'b',
+			text: 'bet A',
+			send2sock: {"data": {"type": "place_betting","bets": {"game": 100},"place_id": "A"},"type": "action"},
+			dom: 'p.contNav'
+		},{
+			type: 'b',
+			text: 'bet B',
+			send2sock: {"data": {"type": "place_betting","bets": {"game": 100},"place_id": "B"},"type": "action"},
+			dom: 'p.contNav'
+		},{
+			type: 'b',
+			text: 'user surrender',
+			send2sock: {"data": {"type": "user_surrender"},"type": "action"},
+			dom: 'p.contNav'
+		},{
+			type: 'b',
+			text: 'leave A',
+			send2sock: {"data": {"type": "place_leave","place_id": "A"},"type": "action"},
+			dom: 'p.contNav'
+		},{
+			type: 'b',
+			text: 'leave B',
+			send2sock: {"data": {"type": "place_leave","place_id": "B"},"type": "action"},
+			dom: 'p.contNav'
+		}];
+
+		for (var i in arguments[0])
+			p[i] = arguments[0][i];
+	};
+
+	bgl.prototype.bglInit = function (){
+		var p = this;
+//		console.log('bgl.prototype.init', p);
+
+		for (var i in p.b){	
+			if (p.b[i].type == 'b'){
+//				console.log('p', p.contNav);
+				p.contNav.append('<div class="button" data-id="' + i + '" id="b' + (p.id + '') + (i + '') + '">' + p.b[i].text + '</div>');
+				$('#b' + (p.id + '') + (i + '')).on('click', {p: p}, p.onButtonClick);
+			}
+			else{
+//				console.log(p.b[i]);
+			}
+		}
+	}	
+
+//	Send Json game-actions to WS 
+	bgl.prototype.onButtonClick = function (e){
+		var p = e.data.p;
+		p.s(p.b[$(this).data('id')].send2sock);
+	}
+
+	bgl.prototype.sAM = function(){
+		var p = e.data.p;
+		p.s('{"data":null, "type":"snapshot"}');
+//		console.log('1');
+	}
+
+//  make a move
+	bgl.prototype.gMove = function(){
+		p.s('{"data": {"type": "game_move","steps": "p01,p06"},"type": "action"}');
+	}
+	
+
+
+// 	хз что 
+	bgl.prototype.l = function(txt, type, addLine){
+		var p = this;
+		var d = new Date(), ds = '';
+		ds = d.getDate() + '.' + (d.getMonth() + 1) + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ':' + d.getMilliseconds();
+
+		if (addLine)
+			p.contLog.append('<div class="d">' + ds + '</div>' + '<div class="t">============================</div>');
+			p.contLog.append('<div class="d">' + ds + '</div>' + '<div class="t' + (type?' ' + type:'') + '">' + txt + '</div>');
+			p.contLog.scrollTop(p.contLog.find('div').last().offset().top + p.contLog.scrollTop());
+
+//			$('#container').animate({scrollTop: $('#container').last().offset().top}, "fast");
+//			console.log($('#container').find('div').last(), $('#container').find('div').last().offset(), $('#container').scrollTop());
+	}
+
+
+
+//	}
+
+
+
+
+
+	var nardy = new bgl();
+//	nardy.init();
+
+
+	var man = function(){
+		var p = this;
+		p.id = (new Date).getTime();
+		p.cou = 0;
+		p.elWin = {};
+		p.aWin = {};
+		p.tmp = null;
+		p.widthCou = 0; 
+
+		$('#pip').on('click', function(){
+			if($('#wrapper').hasClass('hide')){
+				$('#wrapper').removeClass('hide');
+				$('#pip').text('∧');
+			}
+			else{
+				$('#wrapper').addClass('hide');
+				$('#pip').text('∨');
+			}
+		});
+
+		$(function() {
+			$( "#draggable" ).draggable({containment: "#game-cintent"}).resizable({
+				containment: "#game-cintent"
+			});
+		});
+	}
+
+
+	man.prototype.fInit = function (){
+		var p = this;
+		$('#b1').on('click', {p: p}, p.onCreateGameWin);
+		$('#b1').on('click', {p: p}, p.wWidth);
+		$('#b2').on('click', {p: p}, p.boardWin);
+	}
+
+	man.prototype.boardWin = function(e){
+		var p = e.data.p;
+
+			if(($('#game-content .draggable').length == 0)){
+			$('#game-content').append('<div class="draggable " id="draggable" >'+
+											'<div id="iWin">'+
+												'<div class="bTop">'+
+													'<div class="bField" id="p01">'+
+														'<div id="1" class="black"></div>'+
+														'<div id="2" class="black"></div>'+
+														'<div id="3" class="black"></div>'+
+														'<div id="4" class="black"></div>'+
+														'<div id="5" class="black"></div>'+
+														'<div id="6" class="black"></div>'+
+														'<div id="7" class="black"></div>'+
+														'<div id="8" class="black"></div>'+
+														'<div id="9" class="black"></div>'+
+														'<div id="10" class="black"></div>'+
+														'<div id="11" class="black"></div>'+
+														'<div id="12" class="black"></div>'+
+														'<div id="13" class="black"></div>'+
+														'<div id="14" class="black"></div>'+
+														'<div id="15" class="black"></div>'+
+													'</div>'+
+													'<div class="bField" id="p02"></div>'+
+													'<div class="bField" id="p03"></div>'+
+													'<div class="bField" id="p04"></div>'+
+													'<div class="bField" id="p05"></div>'+
+													'<div class="bField" id="p06"></div>'+
+													'<div class="bField" id="p07"></div>'+
+													'<div class="bField" id="p08"></div>'+
+													'<div class="bField" id="p09"></div>'+
+													'<div class="bField" id="p10"></div>'+
+													'<div class="bField" id="p11"></div>'+
+													'<div class="bField" id="p12">'+
+													'</div>'+
+												'</div>'+
+												'<div class="bBottom">'+
+													'<div class="bField" id="p13">'+
+														'<div id="1" class="white"></div>'+
+														'<div id="2" class="white"></div>'+
+														'<div id="3" class="white"></div>'+
+														'<div id="4" class="white"></div>'+
+														'<div id="5" class="white"></div>'+
+														'<div id="6" class="white"></div>'+
+														'<div id="7" class="white"></div>'+
+														'<div id="8" class="white"></div>'+
+														'<div id="9" class="white"></div>'+
+														'<div id="0" class="white"></div>'+
+														'<div id="11" class="white"></div>'+
+														'<div id="12" class="white"></div>'+
+														'<div id="13" class="white"></div>'+
+														'<div id="14" class="white"></div>'+
+														'<div id="15" class="white"></div>'+
+													'</div>'+
+													'<div class="bField" id="p14"></div>'+
+													'<div class="bField" id="p15"></div>'+
+													'<div class="bField" id="p16"></div>'+
+													'<div class="bField" id="p17"></div>'+
+													'<div class="bField" id="p18"></div>'+
+													'<div class="bField" id="p19"></div>'+
+													'<div class="bField" id="p20"></div>'+
+													'<div class="bField" id="p21"></div>'+
+													'<div class="bField" id="p22"></div>'+
+													'<div class="bField" id="p23"></div>'+
+													'<div class="bField" id="p24"></div>'+
+												'</div>'+
+											'</div>'+
+										'</div>');
+		}else if ($('#game-content .draggable').length == 1 && $('#draggable').hasClass('hiden') == false){
+//			console.log('2');
+			$('#draggable').addClass('hiden');
+			$('#draggable').hide();
+		}else if($('#game-content .draggable').length == 1 && $('#draggable').hasClass('hiden') == true){
+			$('#draggable').removeClass('hiden');
+			$('#draggable').show();
+		}
+
+		$("#draggable").draggable(); 
+		$("#draggable").resizable();
+	}
+
+//	Максимальная высота для контента *на флексах
+	man.prototype.wWidth = function(e){
+		var p = e.data.p;
+//		console.log(p);
+		if(p.widthCou == 1){
+			$('.content').css({'height':(89 + '%')});	
+//			$('.container.mc').css({'height':(92 + '%')});	
+		}
+		else if(p.widthCou == 2){
+			$('.content').css({'height':(87 + '%')});	
+//			$('.container.mc').css({'height':(92 + '%')});
+		}
+		else if(p.widthCou == 3){
+			$('.content').css({'height':(87 + '%')});	
+		}
+		else if(p.widthCou == 4){
+			$('.content').css({'height':(84 + '%')});	
+		}
+	}
+
+	man.prototype.closeWin = function(b){
+		$(b).closest('div.game-win').remove();
+		this.widthCou--;		
+		console.log(this.widthCou);
+	}
+
+//	man.prototype.visualWin = function(){
+		
+//	}
+
+	man.prototype.onCreateGameWin = function (e){
+//		console.log(arguments, el.data.p);
+		var p = e.data.p;
+
+		if($('#gameid').val() == '1940000'){
+			if($(".th")){
+				 $("div.th").remove();
+			}
+
+			if(p.widthCou < 4){
+				p.widthCou++;
+				p.cou++;
+				p.tmp = (p.id + '') + '-' + (p.cou + '');
+
+				$('#game-content').append('' +
+							'<div class="game-win gLog" id="gw' + p.tmp + '">' +
+								'<div class="container mn" id ="mn' + p.tmp + '">' +
+									'<div id="u' + p.tmp + '"></div>' +
+									'<div id="n' + p.tmp + '"></div>' +
+									'<div id="en' + p.tmp + '"></div>' +
+								'</div>'+
+								'<div class="container mc" id ="mc' + p.tmp + '">' +
+									'<div class="content" id="l' + p.tmp + '"></div>' +
+								'</div>' +
+							'</div>'	
+							);
+				p.elWin[p.cou] = new elMan({
+					gameWin: $('#gw' + p.tmp),
+					navMain: $('#mn' + p.tmp),
+					dUid: $('#u' + p.tmp),
+					contNav: $('#n' + p.tmp),
+					eText: $('#en' + p.tmp),
+					contMain: $('#mc' + p.tmp),
+					contLog: $('#l' + p.tmp),
+					winClose: function(){
+						var p = e.data.p;
+						var b = this;
+						p.closeWin(b);
+					}		
+				});
+				p.aWin[p.cou] = new bgl({
+					contNav: $('#n' + p.tmp)
+				});
+			}else{
+				alert('Stop this shit!');
+				return;
+			}
+			p.elWin[p.cou].elInit();
+			p.aWin[p.cou].bglInit();	
+		}
+/*		else if($('#gameid').val() == '123456789'){
+
+			if($('.bgl')){
+				$("div.bgl").remove();
+			}
+
+			p.cou++;
+			p.tmp = (p.id + '') + '-' + (p.cou + '');
+
+			$('#game-content').append('' +
+						'<div class="game-win th" id="gw' + p.tmp + '">' +
+							'<div class="container mn" id ="mn' + p.tmp + '">' +
+								'<div id="u' + p.tmp + '"></div>' +
+								'<div id="n' + p.tmp + '"></div>' +
+							'</div>'+
+							'<div class="container mc" id ="mc' + p.tmp + '">' +
+								'<div class="content" id="l' + p.tmp + '"></div>' +
+							'</div>' +
+						'</div>'	
+						);
+
+			p.aWin[p.cou] = new th({
+				gameWin: $('#gw' + p.tmp),
+				navMain: $('#mn' + p.tmp),
+				contNav: $('#n' + p.tmp),
+				contMain: $('#mc' + p.tmp),
+				contLog: $('#l' + p.tmp),
+				winMan: function(){
+//					console.log('привет');
+				},
+			});
+			
+			p.aWin[p.cou].init();
+
+//			console.log(p.aWin[p.cou]);
+		}*/
+	}
+
+	var mw = new man();
+	mw.fInit();
+	
+/*
+	var parser = function(){
+		var p = this;
+		p.urlHubApi = location.protocol + '//' + location.hostname + '/go-hub1-sys/';
+		p.urlWSHub1 = (location.protocol == 'http:' || location.protocol == 'http'?'ws':'wss') + '://' + location.hostname + '/go-hub1-ws-bot/';
+
+		p.id = (new Date).getTime();
+
+		p.key = '';
+		p.socket = null;
+
+		
+	};5
+
+	var logParse = new psrser();
+*/
+
+</script>
+
+</body>
+</html>
+
+
